@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import mlx.core as mx
+import mlx.nn as nn
 import numpy as np
 
 from visionary_mlx.config import AgentConfig, DynamicsConfig, TokenizerConfig
@@ -89,6 +90,20 @@ def test_agent_act():
     logits, _ = ag.policy(z)
     selected = ag.log_prob(logits, action)
     assert selected.shape == (3,)
+
+
+def test_agent_log_prob_backprop_stops_discrete_indices():
+    ag = ActorCritic(latent_dim=16, cfg=AgentConfig(hidden_dim=32, num_actions=5))
+    z = mx.random.normal((2, 4, 4))
+
+    def loss_fn(model, latent):
+        logits, _ = model.policy(latent)
+        actions = mx.random.categorical(logits)
+        return -mx.mean(model.log_prob(logits, actions))
+
+    loss, grads = nn.value_and_grad(ag, loss_fn)(ag, z)
+    mx.eval(loss, grads)
+    assert loss.shape == ()
 
 
 def test_env_step():

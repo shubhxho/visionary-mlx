@@ -53,7 +53,9 @@ class ActorCritic(nn.Module):
         logp = logits - mx.logsumexp(logits, axis=-1, keepdims=True)
         # ``one_hot`` is not part of MLX Core. Gather works across supported
         # MLX versions and avoids materialising an action-sized dense tensor.
-        indices = actions.astype(mx.int32)[..., None]
+        # Actions are sampled discrete decisions, never differentiable model
+        # inputs. MLX otherwise attempts a VJP through gather indices.
+        indices = mx.stop_gradient(actions.astype(mx.int32))[..., None]
         return mx.take_along_axis(logp, indices, axis=-1).squeeze(-1)
 
     @staticmethod
