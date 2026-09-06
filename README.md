@@ -1,3 +1,12 @@
+---
+library_name: mlx
+tags:
+  - mlx
+  - world-model
+  - video
+  - reinforcement-learning
+---
+
 # Visionary MLX
 
 MLX video tokenizer, action-conditioned world model, and imagination-trained agent.
@@ -16,3 +25,11 @@ The benchmark command writes JSON and Markdown evidence from a separate,
 deterministic held-out rollout set. The shipped environments are synthetic
 (`arena`, `pong`, and `balls`), so their scores are not comparable to external
 vision or video benchmarks.
+
+## Release status
+
+This repository is the source release and model card for the ongoing
+`champion` training run. No pretrained weights or external benchmark claims
+are published yet. The first weight release will include safetensors,
+configuration, deterministic held-out benchmark JSON/Markdown, and the
+training commit SHA.
