@@ -51,9 +51,10 @@ class ActorCritic(nn.Module):
     @staticmethod
     def log_prob(logits: mx.array, actions: mx.array) -> mx.array:
         logp = logits - mx.logsumexp(logits, axis=-1, keepdims=True)
-        # gather
-        oh = mx.one_hot(actions, logits.shape[-1])
-        return mx.sum(logp * oh, axis=-1)
+        # ``one_hot`` is not part of MLX Core. Gather works across supported
+        # MLX versions and avoids materialising an action-sized dense tensor.
+        indices = actions.astype(mx.int32)[..., None]
+        return mx.take_along_axis(logp, indices, axis=-1).squeeze(-1)
 
     @staticmethod
     def entropy(logits: mx.array) -> mx.array:

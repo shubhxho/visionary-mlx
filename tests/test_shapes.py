@@ -86,6 +86,9 @@ def test_agent_act():
     assert action.shape == (3,)
     assert logp.shape == (3,)
     assert v.shape == (3,)
+    logits, _ = ag.policy(z)
+    selected = ag.log_prob(logits, action)
+    assert selected.shape == (3,)
 
 
 def test_env_step():
