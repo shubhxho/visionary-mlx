@@ -33,3 +33,6 @@ This repository is the source release and model card for the ongoing
 are published yet. The first weight release will include safetensors,
 configuration, deterministic held-out benchmark JSON/Markdown, and the
 training commit SHA.
+
+Long MLX runs checkpoint tokenizer, dynamics, and agent weights periodically;
+preview generation is non-fatal when local storage is exhausted.

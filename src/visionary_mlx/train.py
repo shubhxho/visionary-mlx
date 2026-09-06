@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from errno import ENOSPC
 from pathlib import Path
 
 import mlx.core as mx
@@ -84,7 +85,12 @@ def train_tokenizer(
                 flush=True,
             )
         if step % cfg.eval_every == 0 or step == steps:
-            _eval_tokenizer(model, loader, run_dir / "tokenizer", step)
+            try:
+                _eval_tokenizer(model, loader, run_dir / "tokenizer", step)
+            except OSError as exc:
+                if exc.errno != ENOSPC:
+                    raise
+                print("  skipping tokenizer preview: disk is full", flush=True)
     save_model(model, run_dir / "tokenizer.safetensors")
     save_json(logs, run_dir / "tokenizer_log.json")
     return {"logs": logs, "params": count_params(model)}
@@ -150,7 +156,15 @@ def train_dynamics(
                 flush=True,
             )
         if step % cfg.eval_every == 0 or step == steps:
-            _eval_dynamics(dyn, tok, loader, run_dir / "dynamics", step)
+            # Persist the learned dynamics before optional preview creation so
+            # an out-of-space GIF never loses hours of model training.
+            save_model(dyn, run_dir / "dynamics.safetensors")
+            try:
+                _eval_dynamics(dyn, tok, loader, run_dir / "dynamics", step)
+            except OSError as exc:
+                if exc.errno != ENOSPC:
+                    raise
+                print("  skipping dynamics preview: disk is full", flush=True)
     tok.train()
     save_model(dyn, run_dir / "dynamics.safetensors")
     save_json(logs, run_dir / "dynamics_log.json")
@@ -269,6 +283,8 @@ def train_agent(
                 f"ret={rec['ret']:.3f} {rec['sec']:.1f}s",
                 flush=True,
             )
+        if step % cfg.eval_every == 0 or step == steps:
+            save_model(agent, run_dir / "agent.safetensors")
     tok.train()
     dyn.train()
     save_model(agent, run_dir / "agent.safetensors")
