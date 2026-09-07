@@ -5,6 +5,7 @@ from __future__ import annotations
 import mlx.core as mx
 import mlx.nn as nn
 import numpy as np
+import pytest
 
 from visionary_mlx.config import AgentConfig, DynamicsConfig, TokenizerConfig
 from visionary_mlx.config import champion_config
@@ -12,6 +13,7 @@ from visionary_mlx.agent import ActorCritic
 from visionary_mlx.dynamics import DynamicsModel
 from visionary_mlx.layers import count_params, patchify, unpatchify
 from visionary_mlx.tokenizer import VideoTokenizer
+from visionary_mlx.cli import _load_cli_dataset
 
 
 def _tok_cfg() -> TokenizerConfig:
@@ -123,3 +125,12 @@ def test_champion_config_is_serializable_and_compatible():
     cfg = champion_config()
     assert cfg.to_dict()["tokenizer"]["model_dim"] == 256
     assert cfg.dynamics.num_layers % cfg.dynamics.temporal_period == 0
+
+
+def test_missing_dataset_has_collection_recovery(tmp_path):
+    class Args:
+        config = "champion"
+        env = "arena"
+
+    with pytest.raises(SystemExit, match="visionary-mlx collect"):
+        _load_cli_dataset(tmp_path, Args())

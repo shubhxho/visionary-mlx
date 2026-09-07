@@ -45,6 +45,10 @@ The release directory contains `model_config.json` and three safetensors files
 the matching `--config` name and run directory:
 
 ```sh
+# A dream requires a video/action rollout. Create one if you do not already
+# have a compatible arena.npz dataset.
+uv run visionary-mlx collect --config champion --env arena --data-dir data/eval \
+  --num-episodes 256 --episode-len 32 --image-size 64 --seed 100
 uv run visionary-mlx dream --config champion --run-dir releases/v0.2.0 \
   --data-dir data/eval --env arena --out dreams
 uv run visionary-mlx benchmark --config champion --run-dir releases/v0.2.0 \

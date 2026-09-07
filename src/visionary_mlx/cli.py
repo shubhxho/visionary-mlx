@@ -35,6 +35,19 @@ def _model_cfg(name: str) -> ModelConfig:
     return CONFIGS[name]()
 
 
+def _load_cli_dataset(data_dir: Path, args) -> dict:
+    """Load a command dataset with an actionable recovery message."""
+    path = data_dir / f"{args.env}.npz"
+    if not path.is_file():
+        raise SystemExit(
+            f"dataset not found: {path}\n"
+            "Create a compatible rollout set first, for example:\n"
+            f"  visionary-mlx collect --config {args.config} --env {args.env} "
+            f"--data-dir {data_dir} --num-episodes 256 --episode-len 32 --image-size 64 --seed 100"
+        )
+    return load_dataset(path)
+
+
 def cmd_collect(args) -> None:
     run, data = _paths(args)
     print(f"collecting {args.num_episodes} {args.env} episodes of {args.episode_len} frames")
@@ -59,7 +72,7 @@ def cmd_train_tokenizer(args) -> None:
     mcfg = _model_cfg(args.config)
     save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
-    ds = load_dataset(data / f"{args.env}.npz")
+    ds = _load_cli_dataset(data, args)
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
     mx.random.seed(tcfg.seed)
     model = VideoTokenizer(mcfg.tokenizer)
@@ -72,7 +85,7 @@ def cmd_train_dynamics(args) -> None:
     mcfg = _model_cfg(args.config)
     save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
-    ds = load_dataset(data / f"{args.env}.npz")
+    ds = _load_cli_dataset(data, args)
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
     mx.random.seed(tcfg.seed)
     tok = VideoTokenizer(mcfg.tokenizer)
@@ -87,7 +100,7 @@ def cmd_train_agent(args) -> None:
     mcfg = _model_cfg(args.config)
     save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
-    ds = load_dataset(data / f"{args.env}.npz")
+    ds = _load_cli_dataset(data, args)
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
     mx.random.seed(tcfg.seed)
     tok = VideoTokenizer(mcfg.tokenizer)
@@ -103,7 +116,7 @@ def cmd_train_agent(args) -> None:
 def cmd_train_rssm(args) -> None:
     run, data = _paths(args)
     tcfg = _train_cfg(args)
-    ds = load_dataset(data / f"{args.env}.npz")
+    ds = _load_cli_dataset(data, args)
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
     mx.random.seed(tcfg.seed)
     model = RSSM(z=32, hdim=128, num_actions=5)
@@ -115,7 +128,7 @@ def cmd_dream(args) -> None:
     run, data = _paths(args)
     mcfg = _model_cfg(args.config)
     save_json(mcfg.to_dict(), run / "model_config.json")
-    ds = load_dataset(data / f"{args.env}.npz")
+    ds = _load_cli_dataset(data, args)
     loader = ClipLoader(ds, seq_len=args.seq_len, batch_size=args.num, seed=args.seed)
     batch = loader.sample()
     tok = VideoTokenizer(mcfg.tokenizer)
@@ -143,7 +156,7 @@ def cmd_benchmark(args) -> None:
     mcfg = _model_cfg(args.config)
     save_json(mcfg.to_dict(), run / "model_config.json")
     eval_data = Path(args.eval_data_dir or args.data_dir)
-    ds = load_dataset(eval_data / f"{args.env}.npz")
+    ds = _load_cli_dataset(eval_data, args)
     loader = ClipLoader(ds, seq_len=args.seq_len, batch_size=args.batch_size, seed=args.seed)
     tok = VideoTokenizer(mcfg.tokenizer)
     load_weights(tok, run / "tokenizer.safetensors")
