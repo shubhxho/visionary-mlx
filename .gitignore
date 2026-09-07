@@ -13,11 +13,7 @@ data/
 runs/
 artifacts/
 *.npz
-*.safetensors
 !assets/**
 
-# The versioned public checkpoint bundle is published through GitHub Releases
-# and Hugging Face, not committed as Git blobs.
-!releases/
-!releases/v0.2.0/
-!releases/v0.2.0/*.safetensors
+# Training checkpoints live below the ignored `runs/` directory. The versioned
+# `releases/` directory remains uploadable to GitHub Releases and Hugging Face.
