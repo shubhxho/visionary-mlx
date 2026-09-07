@@ -57,6 +57,7 @@ def cmd_collect(args) -> None:
 def cmd_train_tokenizer(args) -> None:
     run, data = _paths(args)
     mcfg = _model_cfg(args.config)
+    save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
     ds = load_dataset(data / f"{args.env}.npz")
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
@@ -69,6 +70,7 @@ def cmd_train_tokenizer(args) -> None:
 def cmd_train_dynamics(args) -> None:
     run, data = _paths(args)
     mcfg = _model_cfg(args.config)
+    save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
     ds = load_dataset(data / f"{args.env}.npz")
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
@@ -83,6 +85,7 @@ def cmd_train_dynamics(args) -> None:
 def cmd_train_agent(args) -> None:
     run, data = _paths(args)
     mcfg = _model_cfg(args.config)
+    save_json(mcfg.to_dict(), run / "model_config.json")
     tcfg = _train_cfg(args)
     ds = load_dataset(data / f"{args.env}.npz")
     loader = ClipLoader(ds, seq_len=tcfg.seq_len, batch_size=tcfg.batch_size, seed=tcfg.seed)
@@ -111,6 +114,7 @@ def cmd_train_rssm(args) -> None:
 def cmd_dream(args) -> None:
     run, data = _paths(args)
     mcfg = _model_cfg(args.config)
+    save_json(mcfg.to_dict(), run / "model_config.json")
     ds = load_dataset(data / f"{args.env}.npz")
     loader = ClipLoader(ds, seq_len=args.seq_len, batch_size=args.num, seed=args.seed)
     batch = loader.sample()
@@ -137,6 +141,7 @@ def cmd_benchmark(args) -> None:
     """Score a trained checkpoint and write release-ready benchmark artifacts."""
     run, _ = _paths(args)
     mcfg = _model_cfg(args.config)
+    save_json(mcfg.to_dict(), run / "model_config.json")
     eval_data = Path(args.eval_data_dir or args.data_dir)
     ds = load_dataset(eval_data / f"{args.env}.npz")
     loader = ClipLoader(ds, seq_len=args.seq_len, batch_size=args.batch_size, seed=args.seed)

@@ -7,6 +7,7 @@ import mlx.nn as nn
 import numpy as np
 
 from visionary_mlx.config import AgentConfig, DynamicsConfig, TokenizerConfig
+from visionary_mlx.config import champion_config
 from visionary_mlx.agent import ActorCritic
 from visionary_mlx.dynamics import DynamicsModel
 from visionary_mlx.layers import count_params, patchify, unpatchify
@@ -116,3 +117,9 @@ def test_env_step():
     assert f1.shape == f0.shape
     assert r.shape == (4,)
     assert d.shape == (4,)
+
+
+def test_champion_config_is_serializable_and_compatible():
+    cfg = champion_config()
+    assert cfg.to_dict()["tokenizer"]["model_dim"] == 256
+    assert cfg.dynamics.num_layers % cfg.dynamics.temporal_period == 0

@@ -36,3 +36,16 @@ training commit SHA.
 
 Long MLX runs checkpoint tokenizer, dynamics, and agent weights periodically;
 preview generation is non-fatal when local storage is exhausted.
+
+## Use a released checkpoint
+
+The release directory contains `model_config.json` and three safetensors files
+(`tokenizer`, `dynamics`, and `agent`). Install MLX on Apple Silicon, then use
+the matching `--config` name and run directory:
+
+```sh
+uv run visionary-mlx dream --config champion --run-dir releases/v0.2.0 \
+  --data-dir data/eval --env arena --out dreams
+uv run visionary-mlx benchmark --config champion --run-dir releases/v0.2.0 \
+  --eval-data-dir data/eval --env arena --name visionary-mlx-champion
+```
