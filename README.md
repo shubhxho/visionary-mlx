@@ -28,11 +28,12 @@ vision or video benchmarks.
 
 ## Release status
 
-This repository is the source release and model card for the ongoing
-`champion` training run. No pretrained weights or external benchmark claims
-are published yet. The first weight release will include safetensors,
-configuration, deterministic held-out benchmark JSON/Markdown, and the
-training commit SHA.
+The `champion` run is complete. Release `v0.2.0` contains tokenizer, dynamics,
+and agent safetensors, the exact configuration, a dream preview, checksums,
+and deterministic held-out benchmark reports. On the repository's separate
+synthetic `arena` evaluation set (32 batches), it achieved tokenizer PSNR
+18.611 / MAE 0.02022 and open-loop dream PSNR 18.610 / MAE 0.02023. These are
+synthetic-workload results only, not an external state-of-the-art claim.
 
 Long MLX runs checkpoint tokenizer, dynamics, and agent weights periodically;
 preview generation is non-fatal when local storage is exhausted.

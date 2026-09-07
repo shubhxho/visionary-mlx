@@ -1,0 +1,9 @@
+[
+  {
+    "name": "visionary-mlx-champion-v0.2.0",
+    "tokenizer_psnr": 18.610643982887268,
+    "tokenizer_mae": 0.020224076171871275,
+    "dream_psnr": 18.60952651500702,
+    "dream_mae": 0.020230756665114313
+  }
+]

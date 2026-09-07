@@ -1,0 +1,46 @@
+{
+  "tokenizer": {
+    "encoder_layers": 16,
+    "decoder_layers": 16,
+    "num_latents": 64,
+    "num_heads": 8,
+    "num_kv_heads": 2,
+    "model_dim": 256,
+    "head_dim": 32,
+    "mlp_hidden_dim": 1024,
+    "channel_dim": 32,
+    "patch_size": 8,
+    "image_size": 64,
+    "rope_base": 10000.0,
+    "temporal_period": 4,
+    "temporal_offset": 1,
+    "independent_prob": 0.3,
+    "mask_prob_min": 0.0,
+    "mask_prob_max": 0.9
+  },
+  "dynamics": {
+    "num_layers": 24,
+    "num_heads": 8,
+    "num_kv_heads": 2,
+    "num_registers": 4,
+    "num_actions": 5,
+    "max_step_size": 6,
+    "model_dim": 256,
+    "head_dim": 32,
+    "mlp_hidden_dim": 1024,
+    "context_length": 32,
+    "rope_base": 10000.0,
+    "temporal_period": 4,
+    "sample_steps": 8,
+    "context_tau": 0.9
+  },
+  "agent": {
+    "hidden_dim": 512,
+    "num_actions": 5,
+    "imagine_horizon": 32,
+    "gamma": 0.99,
+    "lam": 0.95,
+    "entropy_coef": 0.01,
+    "value_coef": 0.5
+  }
+}
